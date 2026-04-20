@@ -4,7 +4,7 @@ branding:
   secondaryColor: "#8C5237"
   linkColor: "#B56E4A"
   linkHoverColor: "#8C5237"
-  logo: assets/logo.svg
+  logo: assets/logo.png
   favicon: assets/favicon.ico
   contact: "support@clay.nz"
   background: minimal

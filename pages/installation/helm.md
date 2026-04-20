@@ -11,6 +11,14 @@ Install Clay.nz on your Kubernetes cluster using Helm.
 - Review the [Requirements](requirements) page
 - Run [preflight checks](requirements#preflight-checks) to validate your environment
 
+## Registry Login
+
+Log in to the Replicated registry before installing or running preflights:
+
+```bash
+helm registry login registry.replicated.com --username {{ customer.email }} --password {{ license.id }}
+```
+
 ## Configuration
 
 <KubernetesDistribution />

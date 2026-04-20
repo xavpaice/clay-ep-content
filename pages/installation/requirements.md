@@ -41,7 +41,13 @@ Both can be configured via Helm values. If no default StorageClass is available,
 
 ## Preflight Checks
 
-Run preflight checks before installing to verify your environment. The required values must be set for the template to render correctly:
+First, log in to the Replicated registry:
+
+```bash
+helm registry login registry.replicated.com --username {{ customer.email }} --password {{ license.id }}
+```
+
+Then run preflight checks to verify your environment. The required values must be set for the template to render correctly:
 
 ```bash
 helm template clay oci://registry.replicated.com/{{ app.slug }}/{{ channel.slug }}/clay \

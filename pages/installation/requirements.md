@@ -1,102 +1,52 @@
 ---
-title: Embedded Cluster Installation Requirements
-visible_when:
-  entitlements:
-    - isEmbeddedClusterDownloadEnabled
+title: Requirements
 ---
 
-# Embedded Cluster Installation Requirements
+# Installation Requirements
 
-Ensure your environment meets these requirements before installing with Embedded Cluster.
+Ensure your environment meets these requirements before installing Clay.nz.
 
-## System Requirements
+## Kubernetes Cluster
 
-- Linux operating system
-- x86-64 architecture
-- systemd
-- At least 2GB of memory and 2 CPU cores
-- Disk write latency: Maximum P99 write latency of 10ms (required for etcd performance)
+- Kubernetes 1.27 or later
+- At least 2 CPU cores and 2Gi memory allocatable (4 CPU / 4Gi recommended for production)
+- A default StorageClass with ReadWriteOnce support
+- Ingress controller (Traefik recommended, others supported)
 
-<Warning title="Disk Latency">
-Installations on systems that exceed 10ms P99 write latency may experience etcd instability, leading to cluster failures. Verify disk performance before proceeding.
+<Warning title="Unsupported Distributions">
+Docker Desktop and MicroK8s are not supported. Use a production-grade distribution such as k3s, EKS, GKE, or AKS.
 </Warning>
-- Root access or `sudo` privileges
-- Data directory requirements:
-  - 40Gi or more of total space
-  - Less than 80% full
-  - Default location: `/var/lib/embedded-cluster`
-  - Can be changed with the `--data-dir` flag during installation
 
-<Note title="Custom Data Directory">
-If your system has a dedicated data volume mounted at a path other than `/var/lib/embedded-cluster`, use the `--data-dir` flag during installation to point to it. This must be set at install time and cannot be changed later.
-</Note>
+## Workstation Tools
 
-## Port Requirements
+- [Helm](https://helm.sh/docs/intro/install/) 3.x or later
+- [kubectl](https://kubernetes.io/docs/tasks/tools/) configured with cluster access
 
-The following ports must be open and available for Embedded Cluster installations.
+## Network Requirements
 
-### Ports Used by Local Processes
+The cluster must be able to reach:
 
-These ports must be available for local processes (no firewall openings needed):
+- `proxy.clay.nz` -- container image proxy registry
+- `registry.replicated.com` -- Helm chart registry and SDK images
+- Your SMTP server (if order notification emails are required)
 
-- 2379/TCP
-- 7443/TCP
-- 9099/TCP
-- 10248/TCP
-- 10257/TCP
-- 10259/TCP
+## Storage
 
-### Ports for Node Communication
+Clay.nz uses persistent storage for:
 
-These ports are used for bidirectional communication between nodes in multi-node installations. Create firewall openings between nodes for these ports:
+- **PostgreSQL data** (managed by CloudNativePG) -- default 5Gi
+- **Product image uploads** -- default 5Gi
 
-- 2380/TCP
-- 4789/UDP
-- 6443/TCP
-- 9091/TCP
-- 9443/TCP
-- 10249/TCP
-- 10250/TCP
-- 10256/TCP
+Both can be configured via Helm values. If no default StorageClass is available, set `persistence.storageClass` and `postgres.cluster.storage.storageClass` explicitly.
 
-### Admin Console Port
+## Preflight Checks
 
-Port **30000/TCP** must be open and accessible for the Admin Console. This port must also be accessible by nodes joining the cluster.
+Run preflight checks before installing to verify your environment:
 
-If port 30000 is occupied, you can select a different port during installation using the `--admin-console-port` flag.
+```bash
+helm template clay oci://registry.replicated.com/{{ app.slug }}/{{ channel.slug }}/clay \
+  --version {{ release.version }} \
+  | kubectl preflight -
+```
 
-### Local Artifact Mirror (LAM) Port
-
-Port **50000/TCP** must be open for the Local Artifact Mirror.
-
-If port 50000 is occupied, you can select a different port during installation.
-
-## Firewalld Configuration
-
-If Firewalld is enabled in your environment, Embedded Cluster will automatically configure it to allow necessary traffic. No additional configuration is required.
-
-The following ports are automatically opened in the default zone:
-
-- 6443/TCP
-- 10250/TCP
-- 9443/TCP
-- 2380/TCP
-- 4789/UDP
-
-## Additional System Directories
-
-In addition to the primary data directory, Embedded Cluster creates files in these locations:
-
-- `/etc/cni`
-- `/etc/k0s`
-- `/opt/cni`
-- `/opt/containerd`
-- `/run/calico`
-- `/run/containerd`
-- `/run/k0s`
-- `/var/lib/calico`
-- `/var/lib/cni`
-- `/var/lib/containers`
-- `/var/lib/kubelet`
-- `/var/log/embedded-cluster`
-- `/usr/local/bin/k0s`
+This validates Kubernetes version, cluster resources, storage, and distribution compatibility.

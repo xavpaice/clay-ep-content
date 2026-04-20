@@ -1,30 +1,17 @@
 ---
 title: Helm Installation
-visible_when:
-  entitlements:
-    - isHelmInstallEnabled
 ---
 
 # Helm Installation
 
-Install your application on a Kubernetes cluster using Helm charts. Read the docs or select your deployment preferences.
+Install Clay.nz on your Kubernetes cluster using Helm.
 
-## Requirements
+## Prerequisites
 
-Review the following prerequisites before installing.
-
-- Kubernetes cluster v1.26 or later
-- Helm 3.x installed on your workstation
-- kubectl configured with cluster access
-- StorageClass available for persistent volumes
-
-<Tip title="Before You Begin">
-Run `kubectl get sc` to confirm a default StorageClass is available. If no default is set, the installation will fail when creating persistent volume claims.
-</Tip>
+- Review the [Requirements](requirements) page
+- Run [preflight checks](requirements#preflight-checks) to validate your environment
 
 ## Configuration
-
-Customize the options below. The install commands will update automatically based on your selections.
 
 <KubernetesDistribution />
 <NetworkAvailability installType="helm" />
@@ -37,10 +24,51 @@ Customize the options below. The install commands will update automatically base
 
 <InstanceName />
 
-## Post-Install
+### Required Values
 
-<Note>
-After installation, verify that all pods are running with `kubectl get pods -n <namespace>` before proceeding to post-installation configuration.
-</Note>
+At minimum, you must set these values:
 
-See the post-installation documentation for next steps including configuring TLS, setting up backups, and connecting to your identity provider.
+| Value | Description |
+|-------|-------------|
+| `secrets.ADMIN_PASS` | Admin panel password |
+| `secrets.SESSION_SECRET` | Session encryption key (min 32 chars) |
+| `ingress.host` | Your domain name |
+| `ingress.tls.mode` | TLS mode: `letsencrypt`, `selfsigned`, or `custom` |
+
+### Example
+
+```bash
+helm install clay oci://registry.replicated.com/{{ app.slug }}/{{ channel.slug }}/clay \
+  --namespace clay --create-namespace \
+  --set secrets.ADMIN_PASS=<your-admin-password> \
+  --set secrets.SESSION_SECRET=<random-32-char-string> \
+  --set ingress.enabled=true \
+  --set ingress.host=shop.example.com \
+  --set ingress.tls.mode=letsencrypt \
+  --set ingress.tls.acme.email=admin@example.com
+```
+
+## Post-Install Verification
+
+After installation, verify all components are running:
+
+```bash
+# Check all pods are ready
+kubectl get pods -n clay
+
+# Verify the app is responding
+kubectl exec -n clay deploy/clay -- wget -qO- http://localhost:8080/healthz
+```
+
+You should see pods for:
+- `clay` -- the application
+- `clay-postgres-1` -- PostgreSQL database (managed by CloudNativePG)
+- `clay-cloudnative-pg` -- CloudNativePG operator
+- `clay-cert-manager` -- cert-manager (if TLS is enabled)
+- `clay-sdk` -- Replicated SDK
+
+## Next Steps
+
+- Configure [Ingress and TLS](../configuration/ingress) for your domain
+- Set up [Email](../configuration/email) for order notifications
+- Access the admin panel at `https://<your-domain>/admin`

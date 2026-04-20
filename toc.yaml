@@ -1,42 +1,49 @@
 navigation:
-  - title: Installation
+  - title: Getting Started
     icon: rocket
+    page: pages/home.md
+
+  - title: Installation
+    icon: download
     items:
       - title: Requirements
         page: pages/installation/requirements.md
-        visible_when:
-          entitlements:
-            - isEmbeddedClusterDownloadEnabled
+      - title: Helm Installation
+        page: pages/installation/helm.md
       - title: Release History
         page: pages/installation/release-history.md
-      - title: Linux
-        page: pages/installation/linux.md
+
+  - title: Configuration
+    icon: settings
+    items:
+      - title: Database
+        page: pages/configuration/database.md
+      - title: Ingress and TLS
+        page: pages/configuration/ingress.md
+      - title: Email (SMTP)
+        page: pages/configuration/email.md
+      - title: Firing Logs
+        page: pages/configuration/firing-logs.md
         visible_when:
           entitlements:
-            - isEmbeddedClusterDownloadEnabled
-      - title: Helm
-        page: pages/installation/helm.md
-        visible_when:
-          entitlements:
-            - isHelmInstallEnabled
+            - enableFiringLogs
+
   - title: Operations
     icon: wrench
     items:
-      - title: Security
-        page: pages/operations/security.md
-        visible_when:
-          permissions:
-            - canViewSecurity
+      - title: Upgrading
+        page: pages/operations/upgrading.md
       - title: Support Bundles
-        page: pages/operations/bundles/bundles.md
-      - title: Upload Bundles
-        page: pages/operations/bundles/uploaded.md
+        page: pages/operations/support-bundles.md
+      - title: Troubleshooting
+        page: pages/operations/troubleshooting.md
 
-  - title: Updates
-    icon: refresh-cw
+  - title: Reference
+    icon: book
     items:
-      - title: Checking for Updates
-        page: pages/updates/checking.md
+      - title: Chart Values
+        helm_chart:
+          name: clay
 
   - title: Support
     icon: life-buoy

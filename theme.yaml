@@ -1,0 +1,10 @@
+branding:
+  title: "Clay.nz Documentation"
+  primaryColor: "#B56E4A"
+  secondaryColor: "#8C5237"
+  linkColor: "#B56E4A"
+  linkHoverColor: "#8C5237"
+  logo: assets/logo.svg
+  favicon: assets/favicon.ico
+  contact: "support@clay.nz"
+  background: minimal

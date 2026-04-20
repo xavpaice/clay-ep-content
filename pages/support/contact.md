@@ -4,30 +4,16 @@ title: Contact Support
 
 # Contact Support
 
-Get help from our support team.
+Get help from the Clay.nz support team.
 
 <ContactInfo />
 
 <Tip title="Speed Up Your Support Request">
-Including a support bundle with your request helps our team diagnose issues faster, often reducing resolution time significantly.
+Including a support bundle with your request helps us diagnose issues faster. See [Support Bundles](../operations/support-bundles) to generate one.
 </Tip>
 
 ## Before Contacting Support
 
-1. Check the [FAQ](../support/faq) for common questions
-2. Generate a support bundle for faster troubleshooting:
-
-<Tabs>
-<Tab title="Linux">
-
-See [Linux Support Bundles](../operations/bundles/linux) to generate a bundle from your Embedded Cluster installation.
-
-</Tab>
-<Tab title="Helm">
-
-See [Helm Support Bundles](../operations/bundles/helm) to generate a bundle from your Kubernetes cluster.
-
-</Tab>
-</Tabs>
-
-3. [Upload an existing bundle](../operations/bundles/uploaded) if you already have one
+1. Check the [FAQ](faq) for common questions
+2. Review [Troubleshooting](../operations/troubleshooting) for known issues
+3. Generate a [support bundle](../operations/support-bundles) to include with your request

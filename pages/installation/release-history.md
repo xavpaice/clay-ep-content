@@ -4,6 +4,13 @@ title: Release History
 
 # Release History
 
+## v1.3.6
+
+- Support bundle generation button in admin UI (collects via troubleshoot.sh and uploads to Vendor Portal)
+- Fixed support bundle analyzer file paths and HTTP health check URLs
+- Added /healthz analyzer to support bundle spec
+- ServiceAccount and RBAC for in-cluster support bundle collection
+
 ## v1.3.5
 
 - Proxy all container images through Replicated registry for air-gap readiness

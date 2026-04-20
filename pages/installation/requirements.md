@@ -41,12 +41,32 @@ Both can be configured via Helm values. If no default StorageClass is available,
 
 ## Preflight Checks
 
-Run preflight checks before installing to verify your environment:
+Run preflight checks before installing to verify your environment. The required values must be set for the template to render correctly:
 
 ```bash
 helm template clay oci://registry.replicated.com/{{ app.slug }}/{{ channel.slug }}/clay \
   --version {{ release.version }} \
+  --set secrets.ADMIN_PASS=placeholder \
+  --set secrets.SESSION_SECRET=placeholder-at-least-32-characters-long \
   | kubectl preflight -
 ```
 
+<Tip>
+The `secrets` values are required for the chart to template but are not used during preflight checks. Any non-empty value will work.
+</Tip>
+
 This validates Kubernetes version, cluster resources, storage, and distribution compatibility.
+
+{{#if entitlements.isHelmInstallEnabled}}
+If you have configured an external database, also set those values so the database connectivity check runs:
+
+```bash
+helm template clay oci://registry.replicated.com/{{ app.slug }}/{{ channel.slug }}/clay \
+  --version {{ release.version }} \
+  --set secrets.ADMIN_PASS=placeholder \
+  --set secrets.SESSION_SECRET=placeholder-at-least-32-characters-long \
+  --set postgres.managed=false \
+  --set postgres.external.dsn=<your-dsn> \
+  | kubectl preflight -
+```
+{{/if}}
